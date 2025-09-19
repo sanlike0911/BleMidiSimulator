@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm install:*)",
+      "Bash(npm search:*)",
+      "Bash(npm run build:main:*)",
+      "Bash(npm run electron:dev:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run electron:*)",
+      "Bash(set NODE_ENV=development)",
+      "Bash(cross-env:*)",
+      "Bash(npx cross-env:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
