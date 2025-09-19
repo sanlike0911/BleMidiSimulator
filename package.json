@@ -1,16 +1,19 @@
 {
   "name": "ble-midi-simulator",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "BLE MIDI Simulator - A dual-mode Bluetooth Low Energy MIDI application",
+  "author": "Claude Code Assistant",
   "main": "dist/main/main/index.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:renderer": "vite build --config vite.renderer.config.ts",
     "preview": "vite preview",
     "electron": "cross-env NODE_ENV=production electron .",
-    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5175 && cross-env NODE_ENV=development electron .\"",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
     "build:main": "tsc -p src/main/tsconfig.json",
-    "build:electron": "npm run build && npm run build:main",
+    "build:electron": "npm run build:renderer && npm run build:main",
     "dist": "electron-builder"
   },
   "dependencies": {

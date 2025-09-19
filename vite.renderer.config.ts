@@ -15,6 +15,11 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      root: 'src/renderer',
+      build: {
+        outDir: path.resolve(__dirname, 'dist/renderer'),
+        emptyOutDir: true
       }
     };
 });

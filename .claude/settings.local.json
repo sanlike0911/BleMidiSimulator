@@ -10,7 +10,15 @@
       "Bash(npm run electron:*)",
       "Bash(set NODE_ENV=development)",
       "Bash(cross-env:*)",
-      "Bash(npx cross-env:*)"
+      "Bash(npx cross-env:*)",
+      "Bash(npm run build:electron:*)",
+      "Bash(timeout 10 npm run electron:dev)",
+      "Bash(set ELECTRON_IS_DEV=1)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 10 npm run electron)",
+      "Bash(npm run dist:*)",
+      "Bash(tasklist)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

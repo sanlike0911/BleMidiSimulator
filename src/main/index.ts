@@ -1,7 +1,11 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
+import { initializeCentralHandlers } from './ipc/central-handlers';
+import { initializePeripheralHandlers } from './ipc/peripheral-handlers';
+import { ModeController } from './bluetooth/mode-controller';
 
 const isDev = process.env.NODE_ENV === 'development';
+let modeController: ModeController | null = null;
 
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('isDev:', isDev);
@@ -21,41 +25,68 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:5175');
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(process.cwd(), 'dist/index.html'));
+    mainWindow.loadFile(path.join(process.cwd(), 'dist/renderer/index.html'));
   }
 
   return mainWindow;
 }
 
-// 基本的なIPC通信ハンドラー
+// Mode Controller IPC handlers
 ipcMain.handle('mode:getCurrent', async () => {
-  // 暫定実装: 常にcentralを返す
-  return 'central';
+  if (!modeController) {
+    return 'central'; // Default mode
+  }
+  return modeController.getCurrentMode();
 });
 
 ipcMain.handle('mode:switchTo', async (event, mode: 'central' | 'peripheral') => {
   console.log(`Switching to ${mode} mode`);
-  // TODO: 実際のモード切替実装
-  return true;
+  try {
+    if (!modeController) {
+      modeController = new ModeController();
+      await modeController.initialize();
+    }
+    await modeController.switchMode(mode);
+    return true;
+  } catch (error) {
+    console.error('Failed to switch mode:', error);
+    throw error;
+  }
 });
 
-ipcMain.handle('central:isAvailable', async () => {
-  // TODO: nobleの利用可能性確認
-  return true;
+ipcMain.handle('mode:initialize', async () => {
+  try {
+    if (!modeController) {
+      modeController = new ModeController();
+      await modeController.initialize();
+    }
+    return true;
+  } catch (error) {
+    console.error('Failed to initialize mode controller:', error);
+    throw error;
+  }
 });
 
-ipcMain.handle('peripheral:isAvailable', async () => {
-  // TODO: blenoの利用可能性確認
-  return true;
-});
-
+// Legacy handler for compatibility - now uses mode controller
 ipcMain.handle('midi:sendMessage', async (event, message: Uint8Array) => {
-  console.log('MIDI message to send:', Array.from(message));
-  // TODO: 実際のMIDI送信実装
-  return true;
+  console.log('MIDI send handler via mode controller');
+  try {
+    if (!modeController) {
+      throw new Error('Mode controller not initialized');
+    }
+    await modeController.sendMidiMessage(message);
+    return true;
+  } catch (error) {
+    console.error('Failed to send MIDI message:', error);
+    throw error;
+  }
 });
 
 app.whenReady().then(() => {
+  // Initialize IPC handlers
+  initializeCentralHandlers();
+  initializePeripheralHandlers();
+
   createWindow();
 
   app.on('activate', () => {
@@ -65,6 +96,17 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('before-quit', async () => {
+  // Cleanup mode controller
+  if (modeController) {
+    try {
+      await modeController.cleanup();
+    } catch (error) {
+      console.error('Error during mode controller cleanup:', error);
+    }
+  }
 });
 
 // セキュリティ設定

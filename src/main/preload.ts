@@ -7,24 +7,34 @@ const electronAPI: ElectronAPI = {
   mode: {
     getCurrent: () => ipcRenderer.invoke('mode:getCurrent'),
     switchTo: (mode) => ipcRenderer.invoke('mode:switchTo', mode),
+    initialize: () => ipcRenderer.invoke('mode:initialize'),
   },
 
   // Centralモード
   central: {
     isAvailable: () => ipcRenderer.invoke('central:isAvailable'),
+    initialize: () => ipcRenderer.invoke('central:initialize'),
     startScan: (nameFilter) => ipcRenderer.invoke('central:startScan', nameFilter),
     stopScan: () => ipcRenderer.invoke('central:stopScan'),
     connect: (deviceId) => ipcRenderer.invoke('central:connect', deviceId),
     disconnect: () => ipcRenderer.invoke('central:disconnect'),
+    sendMidiMessage: (message) => ipcRenderer.invoke('central:sendMidiMessage', message),
+    getConnectionState: () => ipcRenderer.invoke('central:getConnectionState'),
+    cleanup: () => ipcRenderer.invoke('central:cleanup'),
   },
 
   // Peripheralモード
   peripheral: {
     isAvailable: () => ipcRenderer.invoke('peripheral:isAvailable'),
+    initialize: () => ipcRenderer.invoke('peripheral:initialize'),
     startAdvertising: (deviceName) => ipcRenderer.invoke('peripheral:startAdvertising', deviceName),
     stopAdvertising: () => ipcRenderer.invoke('peripheral:stopAdvertising'),
     getConnectedCentrals: () => ipcRenderer.invoke('peripheral:getConnectedCentrals'),
     disconnectCentral: (centralId) => ipcRenderer.invoke('peripheral:disconnectCentral', centralId),
+    sendMidiMessage: (message) => ipcRenderer.invoke('peripheral:sendMidiMessage', message),
+    getAdvertisingStatus: () => ipcRenderer.invoke('peripheral:getAdvertisingStatus'),
+    getPeripheralName: () => ipcRenderer.invoke('peripheral:getPeripheralName'),
+    cleanup: () => ipcRenderer.invoke('peripheral:cleanup'),
   },
 
   // MIDI共通

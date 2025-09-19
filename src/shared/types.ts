@@ -1,7 +1,15 @@
 // 共通型定義
 
 export type ConnectionStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
+export type ConnectionState = ConnectionStatus;
 export type BluetoothMode = 'central' | 'peripheral';
+
+export interface BluetoothDevice {
+  id: string;
+  name: string;
+  rssi?: number;
+  connected: boolean;
+}
 
 export interface MidiDeviceState {
   device: any | null;
@@ -34,24 +42,34 @@ export interface ElectronAPI {
   mode: {
     getCurrent(): Promise<BluetoothMode>;
     switchTo(mode: BluetoothMode): Promise<void>;
+    initialize(): Promise<void>;
   };
 
   // Centralモード
   central: {
     isAvailable(): Promise<boolean>;
+    initialize(): Promise<void>;
     startScan(nameFilter?: string): Promise<void>;
     stopScan(): Promise<void>;
     connect(deviceId: string): Promise<void>;
     disconnect(): Promise<void>;
+    sendMidiMessage(message: Uint8Array): Promise<void>;
+    getConnectionState(): Promise<ConnectionState>;
+    cleanup(): Promise<void>;
   };
 
   // Peripheralモード
   peripheral: {
     isAvailable(): Promise<boolean>;
+    initialize(): Promise<void>;
     startAdvertising(deviceName: string): Promise<void>;
     stopAdvertising(): Promise<void>;
     getConnectedCentrals(): Promise<CentralInfo[]>;
     disconnectCentral(centralId: string): Promise<void>;
+    sendMidiMessage(message: Uint8Array): Promise<void>;
+    getAdvertisingStatus(): Promise<boolean>;
+    getPeripheralName(): Promise<string>;
+    cleanup(): Promise<void>;
   };
 
   // MIDI共通
