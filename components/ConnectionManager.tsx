@@ -7,9 +7,11 @@ interface ConnectionManagerProps {
   deviceState: MidiDeviceState;
   onConnect: () => void;
   onDisconnect: () => void;
+  deviceNameFilter: string;
+  onDeviceNameChange: (name: string) => void;
 }
 
-const ConnectionManager: React.FC<ConnectionManagerProps> = ({ deviceState, onConnect, onDisconnect }) => {
+const ConnectionManager: React.FC<ConnectionManagerProps> = ({ deviceState, onConnect, onDisconnect, deviceNameFilter, onDeviceNameChange }) => {
   const { status, device, error } = deviceState;
 
   const getStatusText = () => {
@@ -40,28 +42,39 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({ deviceState, onCo
   };
 
   return (
-    <div className="flex items-center justify-between p-4 bg-gray-800 border border-gray-700 rounded-lg">
-      <div className="flex items-center space-x-3">
+    <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-gray-800 border border-gray-700 rounded-lg">
+      <div className="flex items-center space-x-3 self-start sm:self-center">
         <div className={`w-3 h-3 rounded-full ${status === 'connected' ? 'bg-green-500 animate-pulse' : 'bg-gray-600'}`}></div>
         <span className={`font-mono text-sm ${getStatusColor()}`}>{getStatusText()}</span>
       </div>
       {status === 'connected' ? (
         <button
           onClick={onDisconnect}
-          className="flex items-center space-x-2 px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-red-500 transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-red-500 transition-colors mt-4 sm:mt-0 w-full sm:w-auto justify-center"
         >
           <PlugZapIcon className="w-4 h-4" />
           <span>Disconnect</span>
         </button>
       ) : (
-        <button
-          onClick={onConnect}
-          disabled={status === 'connecting'}
-          className="flex items-center space-x-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <BluetoothIcon className="w-4 h-4" />
-          <span>Connect to BLE MIDI</span>
-        </button>
+        <div className="flex items-center gap-2 w-full sm:w-auto mt-4 sm:mt-0">
+          <input
+            type="text"
+            value={deviceNameFilter}
+            onChange={(e) => onDeviceNameChange(e.target.value)}
+            placeholder="Device Name (Optional Filter)"
+            className="flex-grow sm:flex-grow-0 w-full sm:w-48 px-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 transition-colors disabled:opacity-50"
+            disabled={status === 'connecting'}
+            aria-label="Filter BLE devices by name"
+          />
+          <button
+            onClick={onConnect}
+            disabled={status === 'connecting'}
+            className="flex items-center shrink-0 space-x-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <BluetoothIcon className="w-4 h-4" />
+            <span>Connect</span>
+          </button>
+        </div>
       )}
     </div>
   );

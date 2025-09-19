@@ -14,7 +14,8 @@ const MidiLog: React.FC<MidiLogProps> = ({ messages }) => {
   }, [messages]);
 
   return (
-    <Card title="Received MIDI Messages" className="flex flex-col h-full">
+    <Card className="flex flex-col h-full">
+        <h2 className="text-xl font-bold mb-4 text-gray-200 border-b border-gray-700 pb-2">Received MIDI Messages</h2>
         <div className="flex-grow h-96 bg-gray-900 rounded-md p-2 overflow-y-auto font-mono text-xs">
             {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-gray-500">

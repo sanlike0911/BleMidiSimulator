@@ -9,14 +9,34 @@ import type { MidiDeviceState, ParsedMidiMessage } from './types';
 const MIDI_SERVICE_UUID = '03b80e5a-ede8-4b33-a751-6ce34ec4c700';
 const MIDI_CHARACTERISTIC_UUID = '7772e5db-3868-4112-a1a9-f2669d106bf3';
 
+type SenderComponent = {
+  id: number;
+  type: 'standard' | 'high-res';
+};
+
 function App() {
   const [deviceState, setDeviceState] = useState<MidiDeviceState>({
     device: null,
     status: 'disconnected',
   });
   const [receivedMessages, setReceivedMessages] = useState<ParsedMidiMessage[]>([]);
+  const [senders, setSenders] = useState<SenderComponent[]>([
+    { id: Date.now(), type: 'standard' },
+    { id: Date.now() + 1, type: 'high-res' },
+  ]);
+  const [draggedItemId, setDraggedItemId] = useState<number | null>(null);
+  const [deviceNameFilter, setDeviceNameFilter] = useState<string>('');
   // Fix: Replaced 'BluetoothGATTCharacteristic' with 'any' because Web Bluetooth API types are not available in this context.
   const midiCharacteristicRef = useRef<any | null>(null);
+
+  const addSender = (type: 'standard' | 'high-res') => {
+    const newSender: SenderComponent = { id: Date.now() + Math.random(), type };
+    setSenders(prev => [...prev, newSender]);
+  };
+
+  const removeSender = (id: number) => {
+    setSenders(prev => prev.filter(sender => sender.id !== id));
+  };
 
   const parseMidiMessage = (data: DataView): ParsedMidiMessage | null => {
     if (data.byteLength < 3) return null;
@@ -66,9 +86,14 @@ function App() {
   const handleConnect = useCallback(async () => {
     setDeviceState({ device: null, status: 'connecting' });
     try {
+      const filter: any = { services: [MIDI_SERVICE_UUID] };
+      if (deviceNameFilter.trim()) {
+        filter.namePrefix = deviceNameFilter.trim();
+      }
+      
       // Fix: Cast 'navigator' to 'any' to access the 'bluetooth' property, which is part of the experimental Web Bluetooth API.
       const device = await (navigator as any).bluetooth.requestDevice({
-        filters: [{ services: [MIDI_SERVICE_UUID] }],
+        filters: [filter],
       });
 
       const server = await device.gatt?.connect();
@@ -103,7 +128,7 @@ function App() {
         });
       }
     }
-  }, [handleCharacteristicValueChanged]);
+  }, [handleCharacteristicValueChanged, deviceNameFilter]);
 
   const handleDisconnect = useCallback(() => {
     if (deviceState.device && deviceState.device.gatt?.connected) {
@@ -143,6 +168,38 @@ function App() {
       }
     };
   }, [deviceState.device]);
+  
+  const handleDragStart = (e: React.DragEvent, id: number) => {
+    e.dataTransfer.setData('senderId', String(id));
+    setDraggedItemId(id);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropTargetId: number) => {
+    e.preventDefault();
+    const draggedId = Number(e.dataTransfer.getData('senderId'));
+
+    if (draggedId === dropTargetId) {
+      return;
+    }
+    
+    setSenders(prevSenders => {
+      const draggedIndex = prevSenders.findIndex(s => s.id === draggedId);
+      const dropIndex = prevSenders.findIndex(s => s.id === dropTargetId);
+
+      if (draggedIndex === -1 || dropIndex === -1) {
+        return prevSenders;
+      }
+      
+      const newSenders = [...prevSenders];
+      const [draggedItem] = newSenders.splice(draggedIndex, 1);
+      newSenders.splice(dropIndex, 0, draggedItem);
+      return newSenders;
+    });
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItemId(null);
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 p-4 sm:p-6 lg:p-8">
@@ -161,16 +218,58 @@ function App() {
             deviceState={deviceState}
             onConnect={handleConnect}
             onDisconnect={handleDisconnect}
+            deviceNameFilter={deviceNameFilter}
+            onDeviceNameChange={setDeviceNameFilter}
           />
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="space-y-6">
-              <StandardCCSender onSend={handleSendMidi} disabled={deviceState.status !== 'connected'} />
-              <HighResCCSender onSend={handleSendMidi} disabled={deviceState.status !== 'connected'} />
-            </div>
-            
-            <MidiLog messages={receivedMessages} />
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => addSender('standard')}
+              className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 transition-colors"
+            >
+              Add Standard CC
+            </button>
+            <button
+              onClick={() => addSender('high-res')}
+              className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 transition-colors"
+            >
+              Add High-Res CC
+            </button>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {senders.map(sender => {
+              if (sender.type === 'standard') {
+                return <StandardCCSender 
+                  key={sender.id} 
+                  id={sender.id} 
+                  onSend={handleSendMidi} 
+                  disabled={deviceState.status !== 'connected'} 
+                  onRemove={removeSender}
+                  isDragging={draggedItemId === sender.id}
+                  onDragStart={handleDragStart}
+                  onDrop={handleDrop}
+                  onDragEnd={handleDragEnd}
+                />
+              }
+              if (sender.type === 'high-res') {
+                return <HighResCCSender 
+                  key={sender.id} 
+                  id={sender.id} 
+                  onSend={handleSendMidi} 
+                  disabled={deviceState.status !== 'connected'} 
+                  onRemove={removeSender}
+                  isDragging={draggedItemId === sender.id}
+                  onDragStart={handleDragStart}
+                  onDrop={handleDrop}
+                  onDragEnd={handleDragEnd}
+                />
+              }
+              return null;
+            })}
+          </div>
+          
+          <MidiLog messages={receivedMessages} />
         </main>
         
         <footer className="text-center mt-12 text-gray-500 text-sm">
