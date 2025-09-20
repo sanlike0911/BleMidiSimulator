@@ -1,36 +1,57 @@
-# BLE MIDI Simulator
+# BLE MIDI Simulator - React Native
 
-A web-based simulator to send and receive BLE MIDI messages directly from your browser. It supports both standard 7-bit and high-resolution 14-bit Control Change (CC) messages, providing a flexible interface for testing and interacting with BLE MIDI devices.
+A cross-platform React Native application to send and receive BLE MIDI messages on iOS, Android, and future Windows/Mac support. This app supports both standard 7-bit and high-resolution 14-bit Control Change (CC) messages, providing a flexible interface for testing and interacting with BLE MIDI devices.
+
+**🚀 Status**: Currently migrated from Web version to React Native. Supports BLE Central mode with BLE Peripheral mode coming in future phases.
 
 ## Features
 
-- **Web Bluetooth Connectivity**: Connect to any BLE MIDI device directly from a supported browser.
+- **Cross-Platform BLE Connectivity**: Connect to any BLE MIDI device from iOS and Android devices.
 - **Device Name Filtering**: Easily find your device by filtering the scan list by name.
 - **Standard & High-Res CC**: Send both 7-bit (0-127) and 14-bit (0-16383) CC messages.
 - **Live MIDI Log**: View incoming MIDI messages in real-time.
 - **Dynamic Interface**: Add, remove, and reorder MIDI sender cards via drag-and-drop.
-- **Responsive Design**: Usable on both desktop and mobile devices.
+- **Native Performance**: Optimized for mobile devices with low-latency MIDI communication.
 
 ## Prerequisites
 
-To use this application, you need a modern web browser that supports the **Web Bluetooth API**. As of now, this includes:
-- Google Chrome (Desktop and Android)
-- Microsoft Edge (Desktop)
-- Opera (Desktop and Android)
+- **iOS**: iOS 10.0+ with Bluetooth LE support
+- **Android**: Android 5.0+ (API 21+) with Bluetooth LE support
+- **Development**: React Native development environment set up
+- **Physical Device**: BLE functionality requires real device (not simulator/emulator)
 
-## How to Use
+## Getting Started
 
-### 1. Connecting to a BLE MIDI Device
+### Development Setup
 
-Before you can send or receive messages, you must connect to your BLE MIDI device.
+1. **Set up React Native environment**: Follow the [React Native CLI Quickstart](https://reactnative.dev/docs/environment-setup) guide
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+3. **iOS Setup**:
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+4. **Run the app**:
+   ```bash
+   # For iOS
+   npm run ios
 
-1.  **Power On Your Device**: Make sure your BLE MIDI device is turned on and discoverable.
-2.  **(Optional) Filter by Name**: If you know the name of your device (or part of it), you can type it into the "Device Name" input field. This helps narrow down the list if there are many Bluetooth devices nearby.
-3.  **Click Connect**: Press the **Connect** button. Your browser will open a device selection dialog box, showing a list of available Bluetooth devices.
-4.  **Select and Pair**: Find your MIDI device in the list, select it, and click "Pair".
-5.  **Confirm Connection**: Once connected, the status indicator in the top bar will turn green, and the text will show `Connected to: [Your Device Name]`. The sender cards will become active.
+   # For Android
+   npm run android
+   ```
 
- *(Note: This is a placeholder for a screenshot of the connection UI)*
+### How to Use
+
+#### 1. Connecting to a BLE MIDI Device
+
+1.  **Enable Bluetooth**: Make sure Bluetooth is enabled on your mobile device
+2.  **Power On Your Device**: Make sure your BLE MIDI device is turned on and discoverable
+3.  **(Optional) Filter by Name**: Type part of your device name to filter the scan results
+4.  **Tap Scan**: Press the **Scan** button to discover nearby BLE MIDI devices
+5.  **Select Device**: Tap on your device from the list to connect
+6.  **Confirm Connection**: The status indicator will show "Connected" and display your device name
 
 ### 2. Sending MIDI Messages
 

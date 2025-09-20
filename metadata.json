@@ -1,7 +1,0 @@
-{
-  "name": "BLE MIDI Simulator",
-  "description": "A web-based simulator to send and receive BLE MIDI messages directly from your browser. It supports both standard 7-bit and high-resolution 14-bit Control Change (CC) messages.",
-  "requestFramePermissions": [
-    "bluetooth"
-  ]
-}
