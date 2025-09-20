@@ -138,15 +138,28 @@ try {
 2. プラットフォーム抽象化層実装
 3. 既存UIコンポーネント移植
 
-### フェーズ2: セントラル機能 (3週間) `[PENDING]`
-1. BLEスキャン・接続機能
-2. MIDI over BLE実装
-3. 複数デバイス対応
+### フェーズ2: セントラル機能 (3週間) `[COMPLETED]`
+1. ✅ BLEスキャン・接続機能
+   - デバイススキャナー実装 (`src/core/ble/central/scanner.ts`)
+   - 接続管理実装 (`src/core/ble/central/connector.ts`)
+2. ✅ MIDI over BLE実装
+   - MIDIパーサー実装 (`src/core/midi/parser.ts`)
+   - BLE MIDIクライアント実装 (`src/core/midi/ble-midi-client.ts`)
+3. ✅ 複数デバイス対応
+   - 統合管理システム (`src/core/ble/ble-midi-manager.ts`)
+   - 権限管理システム (`src/core/platform/permissions.ts`)
 
-### フェーズ3: ペリフェラル機能 (4週間) `[PENDING]`
-1. プラットフォーム別ペリフェラル実装
-2. GATT サーバー実装
-3. 仮想MIDI楽器機能
+### フェーズ3: ペリフェラル機能 (4週間) `[COMPLETED]`
+1. ✅ プラットフォーム別ペリフェラル実装
+   - Android ペリフェラルモジュール (`src/native/android/AndroidPeripheralModule.ts`)
+   - Windows ペリフェラルモジュール (`src/native/windows/WindowsPeripheralModule.ts`)
+2. ✅ GATT サーバー実装
+   - GATT サーバー (`src/core/ble/peripheral/gatt-server.ts`)
+   - アドバタイジング管理 (`src/core/ble/peripheral/advertiser.ts`)
+   - 統合ペリフェラル管理 (`src/core/ble/peripheral/peripheral-manager.ts`)
+3. ✅ 仮想MIDI楽器機能
+   - 仮想楽器エンジン (`src/core/instruments/virtual-instrument-engine.ts`)
+   - ピアノ、ドラム、コントローラー、アルペジエーター対応
 
 ### フェーズ4: 最適化・テスト (2週間) `[PENDING]`
 1. パフォーマンス最適化
