@@ -18,7 +18,8 @@
       "Bash(timeout 10 npm run electron)",
       "Bash(npm run dist:*)",
       "Bash(tasklist)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(npx electron:*)"
     ],
     "deny": [],
     "ask": []

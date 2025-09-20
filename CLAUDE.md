@@ -61,3 +61,10 @@ Requires Web Bluetooth API support:
 - Vite config includes path alias `@/*` for root-relative imports
 - Environment variables setup for potential API keys (currently unused for core functionality)
 - TypeScript configured for React JSX and modern ES2022 features
+
+## Documentation
+
+### Design Documents (`docs/*`)
+
+- `docs/electron-migration-design.md` - Design document for migrating to Electron desktop application
+- `docs/electron-implementation-plan.md` - Implementation plan and instructions for Electron integration
