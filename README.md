@@ -63,3 +63,12 @@ The **"Received MIDI Messages"** log at the bottom of the page displays all inco
 ### 5. Disconnecting
 
 When you are finished, simply click the **Disconnect** button. This will close the connection to the device, and the status indicator will return to "Disconnected".
+
+## Documentation
+
+The `docs/` directory contains comprehensive documentation for the React Native migration and expansion project:
+
+- **[React Native Migration Design](docs/react-native-migration-design.md)** - Technical architecture and design specifications for migrating to React Native with cross-platform support (Windows, Mac, Android)
+- **[Implementation Plan](docs/implementation-plan.md)** - Detailed 12-week roadmap for implementing React Native migration and adding BLE peripheral functionality
+
+These documents provide the complete blueprint for transforming this web-based BLE MIDI central simulator into a full-featured cross-platform BLE MIDI simulator supporting both central and peripheral modes.
