@@ -12,9 +12,9 @@ BLE MIDI Simulator - 段階的実装ロードマップ
 
 ### 1.2 リソース要件
 - **React Native開発者**: 1名
-- **ネイティブ開発者**: 1名 (iOS/Android/Windows)
+- **ネイティブ開発者**: 1名 (Android/Windows)
 - **MIDI専門知識**: 外部コンサルタント
-- **テスト端末**: iOS, Android, Windows, Mac各2台
+- **テスト端末**: Android, Windows各2台
 
 ## 2. フェーズ別実装計画
 
@@ -55,7 +55,6 @@ BLE MIDI Simulator - 段階的実装ロードマップ
    ```
 
 3. **プラットフォーム別セットアップ**
-   - iOS: CocoaPods設定
    - Android: Gradle設定
    - Windows: React Native for Windows追加
 
@@ -100,7 +99,6 @@ BLE MIDI Simulator - 段階的実装ロードマップ
    ```
 
 3. **プラットフォーム別アダプター**
-   - iOS: CoreBluetooth wrapper
    - Android: Android BLE wrapper
    - Windows: Windows BLE wrapper
 
@@ -169,7 +167,6 @@ BLE MIDI Simulator - 段階的実装ロードマップ
 
 3. **権限処理**
    - Android: 位置情報権限
-   - iOS: Bluetooth権限
    - Windows: Bluetooth権限
 
 **成果物**:
@@ -249,18 +246,6 @@ BLE MIDI Simulator - 段階的実装ロードマップ
 
 **タスク**:
 1. **プラットフォーム別ペリフェラル実装**
-
-   **iOS実装**:
-   ```typescript
-   // src/native/ios/PeripheralManager.ts
-   import { react-native-peripheral } from 'react-native-peripheral';
-
-   export class iOSPeripheralManager {
-     async startAdvertising(): Promise<void> {
-       // iOS CoreBluetooth peripheral
-     }
-   }
-   ```
 
    **Android実装**:
    ```java
@@ -396,16 +381,13 @@ BLE MIDI Simulator - 段階的実装ロードマップ
    ```
 
 2. **実機テスト**
-   - iOS実機テスト (iPad, iPhone)
    - Android実機テスト (タブレット, スマートフォン)
    - Windows PCテスト
-   - Mac テスト
 
 3. **互換性テスト**
-   - GarageBand (iOS)
    - FL Studio Mobile (Android)
-   - Ableton Live (Windows/Mac)
-   - Logic Pro (Mac)
+   - Ableton Live (Windows)
+   - Cubase (Windows)
 
 **成果物**:
 - 完全にテストされたアプリケーション
@@ -462,35 +444,6 @@ export class AppBleManager {
 ```
 
 ### 3.2 プラットフォーム別ペリフェラル実装
-
-#### iOS ペリフェラル (React Native Bridge)
-```objc
-// ios/BleMidiSimulatorRN/PeripheralManager.h
-#import <React/RCTBridgeModule.h>
-#import <CoreBluetooth/CoreBluetooth.h>
-
-@interface PeripheralManager : NSObject <RCTBridgeModule, CBPeripheralManagerDelegate>
-@property (nonatomic, strong) CBPeripheralManager *peripheralManager;
-@property (nonatomic, strong) CBMutableService *midiService;
-@end
-
-// ios/BleMidiSimulatorRN/PeripheralManager.m
-@implementation PeripheralManager
-
-RCT_EXPORT_MODULE();
-
-RCT_EXPORT_METHOD(startAdvertising:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject) {
-  // iOS CoreBluetooth peripheral implementation
-  [self.peripheralManager startAdvertising:@{
-    CBAdvertisementDataServiceUUIDsKey: @[[CBUUID UUIDWithString:MIDI_SERVICE_UUID]]
-  }];
-
-  resolve(@(YES));
-}
-
-@end
-```
 
 #### Android ペリフェラル (Java/Kotlin)
 ```java
@@ -632,18 +585,15 @@ describe('BLE MIDI E2E', () => {
 {
   "scripts": {
     "android:build": "cd android && ./gradlew assembleRelease",
-    "ios:build": "cd ios && xcodebuild -workspace BleMidiSimulatorRN.xcworkspace -scheme BleMidiSimulatorRN -configuration Release",
     "windows:build": "npx react-native run-windows --release",
-    "build:all": "npm run android:build && npm run ios:build && npm run windows:build"
+    "build:all": "npm run android:build && npm run windows:build"
   }
 }
 ```
 
 ### 5.2 配布チャネル
 - **Android**: Google Play Store + APK直接配布
-- **iOS**: App Store + TestFlight
 - **Windows**: Microsoft Store + MSIX直接配布
-- **macOS**: Mac App Store + DMG直接配布
 
 ### 5.3 CI/CD パイプライン
 ```yaml
@@ -667,11 +617,11 @@ jobs:
       - uses: actions/setup-java@v3
       - run: cd android && ./gradlew assembleRelease
 
-  build-ios:
-    runs-on: macos-latest
+  build-windows:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-      - run: cd ios && xcodebuild -workspace BleMidiSimulatorRN.xcworkspace
+      - run: npx react-native run-windows --release
 ```
 
 ## 6. リスク管理
@@ -680,7 +630,7 @@ jobs:
 | リスク | 影響度 | 確率 | 対策 |
 |--------|--------|------|------|
 | Windows BLE API制限 | 高 | 中 | ネイティブC++実装準備 |
-| iOS App Store審査 | 中 | 低 | BLE使用理由明確化 |
+| Google Play Store審査 | 中 | 低 | BLE使用理由明確化 |
 | Android権限問題 | 中 | 中 | 段階的権限要求 |
 | パフォーマンス問題 | 高 | 中 | 早期プロファイリング |
 

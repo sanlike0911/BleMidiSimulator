@@ -12,7 +12,7 @@ BLE MIDI Simulator - React Native 移行とクロスプラットフォーム対�
 ### 1.2 移行後のアーキテクチャ
 - **フレームワーク**: React Native
 - **BLE通信**: react-native-ble-plx + ネイティブモジュール
-- **対象プラットフォーム**: Windows, Mac, Android
+- **対象プラットフォーム**: Windows, Android
 - **機能**: BLE MIDIセントラル + ペリフェラル（完全なシミュレータ）
 
 ## 2. 技術要件分析
@@ -43,9 +43,8 @@ BLE MIDI Simulator - React Native 移行とクロスプラットフォーム対�
 
 #### 推奨アプローチ
 1. **ハイブリッド実装**
-   - iOS: react-native-peripheral
    - Android: カスタムネイティブモジュール
-   - Windows/Mac: 専用ネイティブライブラリ
+   - Windows: 専用ネイティブライブラリ
 
 2. **GATT サーバー仕様**
    - MIDI Service UUID: `03b80e5a-ede8-4b33-a751-6ce34ec4c700`
@@ -75,19 +74,15 @@ src/
 │   │   ├── generator.ts     # MIDIメッセージ生成
 │   │   └── protocol.ts      # BLE MIDIプロトコル
 │   └── platform/
-│       ├── ios.ts           # iOS固有実装
 │       ├── android.ts       # Android固有実装
-│       ├── windows.ts       # Windows固有実装
-│       └── mac.ts          # Mac固有実装
+│       └── windows.ts       # Windows固有実装
 ├── components/
 │   ├── central/             # セントラル機能UI
 │   ├── peripheral/          # ペリフェラル機能UI
 │   └── common/
 └── native/
-    ├── ios/                 # iOSネイティブモジュール
     ├── android/             # Androidネイティブモジュール
-    ├── windows/             # Windowsネイティブモジュール
-    └── macos/              # macOSネイティブモジュール
+    └── windows/             # Windowsネイティブモジュール
 ```
 
 ### 3.2 状態管理
@@ -197,10 +192,8 @@ interface PlatformBleAdapter {
 - **Characteristic**: 標準MIDI I/O特性
 
 ### 7.2 既存デバイス互換性
-- **iOS GarageBand**: 完全対応
 - **Android MIDI アプリ**: 対応
 - **Windows DAW**: ASIO/DirectSound対応
-- **macOS Logic Pro**: Core MIDI対応
 
 ## 8. 移行戦略
 
@@ -227,16 +220,14 @@ interface PlatformBleAdapter {
 1. **Windows ペリフェラル対応**
    - 対策: カスタムネイティブモジュール開発
 
-2. **macOS サンドボックス制限**
-   - 対策: Mac App Store外配布を検討
 
-3. **Android BLE権限管理**
+2. **Android BLE権限管理**
    - 対策: 段階的権限要求フロー
 
 ### 9.2 制限事項
 - **Expo**: 使用不可（BLE要件のため）
 - **Web版**: 並行維持が必要
-- **iOS App Store**: BLE使用理由の明記必要
+- **Google Play Store**: BLE使用理由の明記必要
 
 ## 10. 成功指標
 

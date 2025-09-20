@@ -2,7 +2,7 @@
 
 ## プロジェクト概要
 
-このプロジェクトは現在のWeb版BLE MIDI Simulatorを、React Nativeベースのクロスプラットフォームアプリケーション（Windows, Mac, Android対応）に移行し、BLEセントラル機能に加えてペリフェラル機能も実装して完全なBLE MIDIシミュレータとすることを目的としています。
+このプロジェクトは現在のWeb版BLE MIDI Simulatorを、React Nativeベースのクロスプラットフォームアプリケーション（Windows, Android対応）に移行し、BLEセントラル機能に加えてペリフェラル機能も実装して完全なBLE MIDIシミュレータとすることを目的としています。
 
 ## 技術スタックと依存関係
 
@@ -18,7 +18,7 @@
 - **BLE セントラル**: react-native-ble-plx
 - **MIDI プロトコル**: @midival/core + @midival/react-native
 - **BLE ペリフェラル**: プラットフォーム別ネイティブモジュール
-- **クロスプラットフォーム**: React Native for Windows/macOS
+- **クロスプラットフォーム**: React Native for Windows
 
 ## プロジェクト構造
 
@@ -176,10 +176,8 @@ try {
 5. **互換性テスト**: 主要MIDIアプリ
 
 ### テスト対象デバイス
-- **iOS**: GarageBand, AUM
 - **Android**: FL Studio Mobile, MIDI連携アプリ
 - **Windows**: Ableton Live, Cubase
-- **Mac**: Logic Pro, MainStage
 
 ## セキュリティとプライバシー
 
@@ -200,7 +198,6 @@ try {
 1. **BLE権限エラー**
    ```typescript
    // Android: 位置情報権限必要
-   // iOS: NSBluetoothAlwaysUsageDescription設定
    // Windows: Bluetooth権限確認
    ```
 
@@ -216,12 +213,12 @@ try {
 
 ## 互換性マトリックス
 
-| 機能 | iOS | Android | Windows | Mac |
-|------|-----|---------|---------|-----|
-| セントラル | ✅ | ✅ | ✅ | ✅ |
-| ペリフェラル | ✅ | ⚠️* | ⚠️* | ✅ |
-| MIDI Service | ✅ | ✅ | ✅ | ✅ |
-| 複数接続 | ✅ | ✅ | ✅ | ✅ |
+| 機能 | Android | Windows |
+|------|---------|----------|
+| セントラル | ✅ | ✅ |
+| ペリフェラル | ⚠️* | ⚠️* |
+| MIDI Service | ✅ | ✅ |
+| 複数接続 | ✅ | ✅ |
 
 *カスタムネイティブモジュール必要
 
@@ -229,9 +226,7 @@ try {
 
 ### 配布チャネル
 - **Android**: Google Play Store + APK直接配布
-- **iOS**: App Store + TestFlight
 - **Windows**: Microsoft Store + MSIX直接配布
-- **Mac**: Mac App Store + DMG直接配布
 
 ### バージョニング
 - **v2.0.0**: React Native基盤版
@@ -247,7 +242,6 @@ try {
 4. **バッテリー最適化**: BLE使用時の省電力対応
 
 ### ストア申請時の注意
-- **iOS**: BLE使用理由の明記必要
 - **Android**: 権限使用理由の説明必要
 - **Windows**: UWP制限事項の確認
 
