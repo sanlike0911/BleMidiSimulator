@@ -4,9 +4,10 @@ import Card from './Card';
 
 interface MidiLogProps {
   messages: ParsedMidiMessage[];
+  onClear: () => void;
 }
 
-const MidiLog: React.FC<MidiLogProps> = ({ messages }) => {
+const MidiLog: React.FC<MidiLogProps> = ({ messages, onClear }) => {
   const logEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -15,7 +16,16 @@ const MidiLog: React.FC<MidiLogProps> = ({ messages }) => {
 
   return (
     <Card className="flex flex-col h-full">
-        <h2 className="text-xl font-bold mb-4 text-gray-200 border-b border-gray-700 pb-2">Received MIDI Messages</h2>
+        <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
+            <h2 className="text-xl font-bold text-gray-200">Received MIDI Messages</h2>
+            <button
+                onClick={onClear}
+                className="px-3 py-1 text-xs font-semibold text-gray-300 bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 transition-colors"
+                aria-label="Clear MIDI message log"
+            >
+                Clear Log
+            </button>
+        </div>
         <div className="flex-grow h-96 bg-gray-900 rounded-md p-2 overflow-y-auto font-mono text-xs">
             {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full text-gray-500">

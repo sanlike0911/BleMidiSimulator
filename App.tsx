@@ -25,7 +25,6 @@ function App() {
     { id: Date.now() + 1, type: 'high-res' },
   ]);
   const [draggedItemId, setDraggedItemId] = useState<number | null>(null);
-  const [deviceNameFilter, setDeviceNameFilter] = useState<string>('');
   // Fix: Replaced 'BluetoothGATTCharacteristic' with 'any' because Web Bluetooth API types are not available in this context.
   const midiCharacteristicRef = useRef<any | null>(null);
 
@@ -37,6 +36,10 @@ function App() {
   const removeSender = (id: number) => {
     setSenders(prev => prev.filter(sender => sender.id !== id));
   };
+  
+  const clearMidiLog = useCallback(() => {
+    setReceivedMessages([]);
+  }, []);
 
   const parseMidiMessage = (data: DataView): ParsedMidiMessage | null => {
     if (data.byteLength < 3) return null;
@@ -86,14 +89,9 @@ function App() {
   const handleConnect = useCallback(async () => {
     setDeviceState({ device: null, status: 'connecting' });
     try {
-      const filter: any = { services: [MIDI_SERVICE_UUID] };
-      if (deviceNameFilter.trim()) {
-        filter.namePrefix = deviceNameFilter.trim();
-      }
-      
       // Fix: Cast 'navigator' to 'any' to access the 'bluetooth' property, which is part of the experimental Web Bluetooth API.
       const device = await (navigator as any).bluetooth.requestDevice({
-        filters: [filter],
+        filters: [{ services: [MIDI_SERVICE_UUID] }],
       });
 
       const server = await device.gatt?.connect();
@@ -128,7 +126,7 @@ function App() {
         });
       }
     }
-  }, [handleCharacteristicValueChanged, deviceNameFilter]);
+  }, [handleCharacteristicValueChanged]);
 
   const handleDisconnect = useCallback(() => {
     if (deviceState.device && deviceState.device.gatt?.connected) {
@@ -206,10 +204,10 @@ function App() {
       <div className="max-w-7xl mx-auto">
         <header className="mb-8 text-center">
           <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-            BLE MIDI Simulator
+            BLE MIDI Central Simulator
           </h1>
           <p className="mt-4 text-lg text-gray-400">
-            Connect to a BLE MIDI device to send and receive control change messages.
+            A web-based simulator for a BLE MIDI Central device.
           </p>
         </header>
 
@@ -218,8 +216,6 @@ function App() {
             deviceState={deviceState}
             onConnect={handleConnect}
             onDisconnect={handleDisconnect}
-            deviceNameFilter={deviceNameFilter}
-            onDeviceNameChange={setDeviceNameFilter}
           />
           
           <div className="flex items-center gap-4">
@@ -269,7 +265,7 @@ function App() {
             })}
           </div>
           
-          <MidiLog messages={receivedMessages} />
+          <MidiLog messages={receivedMessages} onClear={clearMidiLog} />
         </main>
         
         <footer className="text-center mt-12 text-gray-500 text-sm">

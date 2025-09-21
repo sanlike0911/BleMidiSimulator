@@ -25,6 +25,7 @@ const HighResCCSender: React.FC<HighResCCSenderProps> = ({
 }) => {
   const [msbCc, setMsbCc] = useState<number>(7); // Volume MSB
   const [value14bit, setValue14bit] = useState<number>(12874); // ~100 * 128
+  const [description, setDescription] = useState<string>('');
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleSend = useCallback(() => {
@@ -66,12 +67,23 @@ const HighResCCSender: React.FC<HighResCCSenderProps> = ({
       className={`h-full transition-all duration-200 cursor-grab ${isDragging ? 'opacity-30' : 'opacity-100'} ${isDragOver ? 'ring-2 ring-blue-500 rounded-lg' : ''}`}
     >
       <Card className={`h-full ${disabled ? 'opacity-50 pointer-events-none' : ''}`}>
-        <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
-          <h2 className="text-xl font-bold text-gray-200">High-Resolution CC (14-bit)</h2>
+        <div className="flex justify-between items-start mb-4 border-b border-gray-700 pb-2">
+          <div>
+            <h2 className="text-xl font-bold text-gray-200">High-Res CC (14-bit)</h2>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Add a description (e.g., Expression)"
+              className="w-full mt-1 text-xs px-2 py-1 bg-gray-700 border border-gray-600 rounded-md text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              disabled={disabled}
+              aria-label="Sender description"
+            />
+          </div>
           <button
             onClick={() => onRemove(id)}
-            className="text-gray-500 hover:text-red-400 transition-colors"
-            aria-label="Remove High-Resolution CC Sender"
+            className="text-gray-500 hover:text-red-400 transition-colors ml-2"
+            aria-label="Remove High-Res CC Sender"
             title="Remove Sender"
           >
             <XIcon className="w-5 h-5" />

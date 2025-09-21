@@ -1,13 +1,13 @@
-# BLE MIDI Simulator
+# BLE MIDI Central Simulator
 
-A web-based simulator to send and receive BLE MIDI messages directly from your browser. It supports both standard 7-bit and high-resolution 14-bit Control Change (CC) messages, providing a flexible interface for testing and interacting with BLE MIDI devices.
+A web-based simulator for a BLE MIDI Central device to send and receive BLE MIDI messages directly from your browser. It supports both standard 7-bit and high-resolution 14-bit Control Change (CC) messages, providing a flexible interface for testing and interacting with BLE MIDI peripheral devices.
 
 ## Features
 
-- **Web Bluetooth Connectivity**: Connect to any BLE MIDI device directly from a supported browser.
-- **Device Name Filtering**: Easily find your device by filtering the scan list by name.
+- **Web Bluetooth Connectivity**: Connect to any BLE MIDI peripheral directly from a supported browser.
 - **Standard & High-Res CC**: Send both 7-bit (0-127) and 14-bit (0-16383) CC messages.
-- **Live MIDI Log**: View incoming MIDI messages in real-time.
+- **Customizable Descriptions**: Add a custom label to each sender card to easily identify its purpose.
+- **Live MIDI Log**: View incoming MIDI messages in real-time and clear the log when needed.
 - **Dynamic Interface**: Add, remove, and reorder MIDI sender cards via drag-and-drop.
 - **Responsive Design**: Usable on both desktop and mobile devices.
 
@@ -25,22 +25,19 @@ To use this application, you need a modern web browser that supports the **Web B
 Before you can send or receive messages, you must connect to your BLE MIDI device.
 
 1.  **Power On Your Device**: Make sure your BLE MIDI device is turned on and discoverable.
-2.  **(Optional) Filter by Name**: If you know the name of your device (or part of it), you can type it into the "Device Name" input field. This helps narrow down the list if there are many Bluetooth devices nearby.
-3.  **Click Connect**: Press the **Connect** button. Your browser will open a device selection dialog box, showing a list of available Bluetooth devices.
-4.  **Select and Pair**: Find your MIDI device in the list, select it, and click "Pair".
-5.  **Confirm Connection**: Once connected, the status indicator in the top bar will turn green, and the text will show `Connected to: [Your Device Name]`. The sender cards will become active.
-
- *(Note: This is a placeholder for a screenshot of the connection UI)*
+2.  **Click Connect**: Press the **Connect** button. Your browser will open a device selection dialog box, showing a list of available Bluetooth devices.
+3.  **Select and Pair**: Find your MIDI device in the list, select it, and click "Pair".
+4.  **Confirm Connection**: Once connected, the status indicator in the top bar will turn green, and the text will show `Connected to: [Your Device Name]`. The sender cards will become active.
 
 ### 2. Sending MIDI Messages
 
-The application provides two types of "sender" cards for sending Control Change (CC) messages.
+The application provides two types of "sender" cards for sending Control Change (CC) messages. You can add a custom description to each card to remember what it's for (e.g., "Main Volume," "Filter Cutoff").
 
 -   **Standard CC (7-bit)**: For standard MIDI messages with a value range of 0-127.
     -   **CC Number**: Set the Control Change number you want to send (e.g., `7` for Volume, `1` for Modulation).
     -   **Value**: Drag the slider to set the value. The MIDI message is sent automatically when you release the slider.
 
--   **High-Resolution CC (14-bit)**: For high-resolution messages that combine two CC numbers (an MSB and LSB pair) for a much larger value range of 0-16383.
+-   **High-Res CC (14-bit)**: For high-resolution messages that combine two CC numbers (an MSB and LSB pair) for a much larger value range of 0-16383.
     -   **MSB CC (0-31)**: Set the Most Significant Bit CC number. The corresponding LSB (Least Significant Bit) number is automatically set to `MSB + 32`.
     -   **Value**: Drag the slider to set the 14-bit value. Two MIDI messages (one for MSB, one for LSB) are sent when you release the slider.
 
@@ -58,6 +55,7 @@ The **"Received MIDI Messages"** log at the bottom of the page displays all inco
 
 -   Each message is timestamped.
 -   The log decodes common messages like Note On, Note Off, and Control Change, showing the channel, CC number, and value.
+-   Click the **"Clear Log"** button to empty the message history.
 -   This is useful for debugging and confirming that your device is sending data as expected.
 
 ### 5. Disconnecting

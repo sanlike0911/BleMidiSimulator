@@ -7,11 +7,9 @@ interface ConnectionManagerProps {
   deviceState: MidiDeviceState;
   onConnect: () => void;
   onDisconnect: () => void;
-  deviceNameFilter: string;
-  onDeviceNameChange: (name: string) => void;
 }
 
-const ConnectionManager: React.FC<ConnectionManagerProps> = ({ deviceState, onConnect, onDisconnect, deviceNameFilter, onDeviceNameChange }) => {
+const ConnectionManager: React.FC<ConnectionManagerProps> = ({ deviceState, onConnect, onDisconnect }) => {
   const { status, device, error } = deviceState;
 
   const getStatusText = () => {
@@ -56,25 +54,14 @@ const ConnectionManager: React.FC<ConnectionManagerProps> = ({ deviceState, onCo
           <span>Disconnect</span>
         </button>
       ) : (
-        <div className="flex items-center gap-2 w-full sm:w-auto mt-4 sm:mt-0">
-          <input
-            type="text"
-            value={deviceNameFilter}
-            onChange={(e) => onDeviceNameChange(e.target.value)}
-            placeholder="Device Name (Optional Filter)"
-            className="flex-grow sm:flex-grow-0 w-full sm:w-48 px-3 py-2 text-sm bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 transition-colors disabled:opacity-50"
-            disabled={status === 'connecting'}
-            aria-label="Filter BLE devices by name"
-          />
           <button
             onClick={onConnect}
             disabled={status === 'connecting'}
-            className="flex items-center shrink-0 space-x-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center shrink-0 space-x-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-4 sm:mt-0 w-full sm:w-auto justify-center"
           >
             <BluetoothIcon className="w-4 h-4" />
             <span>Connect</span>
           </button>
-        </div>
       )}
     </div>
   );
